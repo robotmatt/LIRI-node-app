@@ -1,20 +1,25 @@
-let Spotify = require('node-spotify-api');
-let Moment = require("moment");
-let fs = require('fs');
+// Import all dependencies 
+const Spotify = require('node-spotify-api');
+const Moment = require("moment");
+const fs = require('fs');
 const axios = require('axios').default;
-let dotenv = require("dotenv").config();
-let keys = require("./keys.js");
-let spotify = new Spotify(keys.spotify);
+const dotenv = require("dotenv").config();
+const keys = require("./keys.js");
+const spotify = new Spotify(keys.spotify);
 
-
-
+// Create Liri object to hold our functions
 let liri = {
+    // concertThis function for when concert-this is called
     concertThis: function (argument) {
+        // Craft query URL
         let queryUrl = "https://rest.bandsintown.com/artists/" + encodeURI(argument) + "/events?app_id=codingbootcamp";
+        // Call Bandsintown API via Axios
         axios.get(queryUrl)
             .then(function (response) {
                 //console.log(response.data);
                 console.log(`${argument} is playing soon! They have ${response.data[0].artist.upcoming_event_count} shows coming up!`);
+                
+                // Print out the upcoming shows
                 response.data.forEach(element => {
                     let showTime = Moment(element.datetime).format("MM/DD/YYYY");
                     console.log(`${element.venue.city}, ${element.venue.region}, ${element.venue.country}: ${showTime}`)
@@ -30,7 +35,7 @@ let liri = {
     },
     spotify: function (argument) {
         //console.log(argument);
-
+        // use Spotify API to search for a song title
         spotify.search({
             type: 'track',
             query: argument
@@ -39,31 +44,24 @@ let liri = {
                 return console.log('Error occurred: ' + err);
             }
 
-            console.log("you searched for: " + argument);
-            console.log("The artist: " + data.tracks.items[0].artists[0].name);
-            console.log("The Song Name: " + data.tracks.items[0].name);
-            console.log("The Link: " + data.tracks.items[0].external_urls.spotify);
-            console.log("The Album: " + data.tracks.items[0].album.name);
+            // Print out the song details
+            console.log(`You searched for: "${argument}"`);
+            console.log("Artist Name: " + data.tracks.items[0].artists[0].name);
+            console.log("Song Name: " + data.tracks.items[0].name);
+            console.log("Album: " + data.tracks.items[0].album.name);
+            console.log("Link to Play Song: " + data.tracks.items[0].external_urls.spotify);
         });
     },
     movieThis: function (argument) {
         //console.log(argument);
         // Then run a request with axios to the OMDB API with the movie specified
         var queryUrl = "http://www.omdbapi.com/?t=" + encodeURI(argument) + "&y=&plot=short&apikey=trilogy";
-        // This line is just to help us debug against the actual URL.
-        //console.log(queryUrl);
-        //     Title of the movie.
-        //    * Year the movie came out.
-        //    * IMDB Rating of the movie.
-        //    * Rotten Tomatoes Rating of the movie.
-        //    * Country where the movie was produced.
-        //    * Language of the movie.
-        //    * Plot of the movie.
-        //    * Actors in the movie.
 
         axios.get(queryUrl).then(
                 function (response) {
                     //console.log("data: " + JSON.stringify(response.data));
+
+                    // Print out the movie details
                     console.log("The movie's name: " + response.data.Title);
                     console.log("The movie's release date is: " + response.data.Released);
                     console.log("The movie's IMDB Rating is: " + response.data.Ratings[0].Value);
@@ -94,7 +92,9 @@ let liri = {
                 console.log(error.config);
             });
     },
+    // doWhatItSays function to read from a file and call the appropriate function
     doWhatItSays: function () {
+        // Read the file random.txt and 
         fs.readFile("./random.txt", 'utf8', function (err, data) {
             let input = data.split(",");
             let command = input[0];
@@ -105,6 +105,7 @@ let liri = {
     }
 };
 
+// decideCall function: decide which function to call based on the command given
 let decideCall = function (command, argument) {
     switch (command) {
         case "concert-this":
@@ -120,7 +121,7 @@ let decideCall = function (command, argument) {
             liri.doWhatItSays(argument);
             break;
         default:
-            console.log("Error");
+            console.log("There was an error, the command was not found");
     }
 };
 
@@ -132,20 +133,3 @@ process.argv.forEach(function (element, index) {
 argument = argument.trim(); // trim off the whitespace at the end
 
 decideCall(process.argv[2], argument);
-// Switch case to execute function based on what command was given
-// switch (process.argv[2]) {
-//     case "concert-this":
-//         liri.concertThis(argument);
-//         break;
-//     case "spotify-this-song":
-//         liri.spotify(argument);
-//         break;
-//     case "movie-this":
-//         liri.movieThis(argument);
-//         break;
-//     case "do-what-it-says":
-//         liri.doWhatItSays(argument);
-//         break;
-//     default:
-//         console.log("Error");
-// }
