@@ -5,7 +5,11 @@ const fs = require('fs');
 const axios = require('axios').default;
 const dotenv = require("dotenv").config();
 const keys = require("./keys.js");
-const spotify = new Spotify(keys.spotify);
+try{
+    const spotify = new Spotify(keys.spotify);
+} catch(error){
+    console.log("No Spotify config file!");
+}
 
 // Create Liri object to hold our functions
 let liri = {
