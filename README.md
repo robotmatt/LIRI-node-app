@@ -1,17 +1,27 @@
-# LIRI-node-app
+# LIRI Node.js Application 
 
-## Concert Command
+## Installation
+
+git clone 
+npm install 
+.env
+
+## Usage
+
+## Screenshots of App
+
+### Concert Command
 
 ![Concert This](https://raw.githubusercontent.com/robotmatt/LIRI-node-app/master/screenshots/concert-this.png)
 
-## Movie Command
+### Movie Command
 
 ![Movie This](https://raw.githubusercontent.com/robotmatt/LIRI-node-app/master/screenshots/movie-this.png)
 
-## Spotify
+### Spotify
 
 ![Spotify](https://raw.githubusercontent.com/robotmatt/LIRI-node-app/master/screenshots/spotify.png)
 
-## Do As it Says
+### Do As it Says
 
 ![Do as it says](https://raw.githubusercontent.com/robotmatt/LIRI-node-app/master/screenshots/do-as-it-says.png)
